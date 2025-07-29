@@ -11,6 +11,7 @@ package NTPack
 
 import (
 	"fmt"
+	"github.com/bwmarrin/snowflake"
 	"net"
 	"os"
 )
@@ -50,4 +51,17 @@ func GetLocalIP() (string, error) {
 		}
 	}
 	return "", fmt.Errorf("未找到有效本地IP")
+}
+
+func GetSnowflake(anode int64) (int64, error) {
+	// 创建节点（机器ID），范围0-1023
+	node, err := snowflake.NewNode(anode)
+	if err != nil {
+		panic(err)
+	}
+
+	// 生成ID
+	id := node.Generate()
+	return id.Int64(), nil
+
 }
