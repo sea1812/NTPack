@@ -10,6 +10,8 @@
 package NTPack
 
 import (
+	"fmt"
+	"net"
 	"os"
 )
 
@@ -17,4 +19,35 @@ import (
 func GetPid() int {
 	pid := os.Getpid()
 	return pid
+}
+
+// GetLocalIP 获取本地非回环IPv4地址
+func GetLocalIP() (string, error) {
+	interfaces, err := net.Interfaces()
+	if err != nil {
+		return "", err
+	}
+
+	for _, iface := range interfaces {
+		if iface.Flags&net.FlagUp == 0 || iface.Flags&net.FlagLoopback != 0 {
+			continue // 跳过未启用或回环接口
+		}
+
+		addrs, err := iface.Addrs()
+		if err != nil {
+			return "", err
+		}
+
+		for _, addr := range addrs {
+			ipNet, ok := addr.(*net.IPNet)
+			if !ok {
+				continue
+			}
+			ip := ipNet.IP.To4()
+			if ip != nil {
+				return ip.String(), nil
+			}
+		}
+	}
+	return "", fmt.Errorf("未找到有效本地IP")
 }
