@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-// TCBComponentHeader 组件头信息结构
+// TCBComponentHeader 组件头信息结构，用于标识自身和发送报文
 type TCBComponentHeader struct {
 	ComponentId  string    //组件名
 	PublisherID  string    //发布消息的署名
